@@ -25,7 +25,7 @@ pub fn target() -> Target {
         target_os: "linux".to_string(),
 
         options: TargetOptions {
-            features: "+v6".to_string(),
+            morestack: false,
             .. base
         },
     }

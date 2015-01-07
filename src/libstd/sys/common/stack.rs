@@ -214,17 +214,18 @@ pub unsafe fn record_sp_limit(limit: uint) {
 
     // mips, arm - Some brave soul can port these to inline asm, but it's over
     //             my head personally
-    #[cfg(any(target_arch = "mips",
-              target_arch = "mipsel",
-              all(target_arch = "arm", not(target_os = "ios"))))]
-    #[inline(always)]
-    unsafe fn target_record_sp_limit(limit: uint) {
-        use libc::c_void;
-        return record_sp_limit(limit as *const c_void);
-        extern {
-            fn record_sp_limit(limit: *const c_void);
-        }
-    }
+    // Hack to disable the stack support for ARMv5
+    // #[cfg(any(target_arch = "mips",
+    //           target_arch = "mipsel",
+    //           all(target_arch = "arm", not(target_os = "ios"))))]
+    // #[inline(always)]
+    // unsafe fn target_record_sp_limit(limit: uint) {
+    //     use libc::c_void;
+    //     return record_sp_limit(limit as *const c_void);
+    //     extern {
+    //         fn record_sp_limit(limit: *const c_void);
+    //     }
+    // }
 
     // aarch64 - FIXME(AARCH64): missing...
     #[cfg(target_arch = "aarch64")]
@@ -232,7 +233,8 @@ pub unsafe fn record_sp_limit(limit: uint) {
     }
 
     // iOS segmented stack is disabled for now, see related notes
-    #[cfg(all(target_arch = "arm", target_os = "ios"))] #[inline(always)]
+    // Hack to disable the stack support for ARMv5
+    #[cfg(all(target_arch = "arm"))] #[inline(always)]
     unsafe fn target_record_sp_limit(_: uint) {
     }
 }
@@ -308,17 +310,18 @@ pub unsafe fn get_sp_limit() -> uint {
 
     // mips, arm - Some brave soul can port these to inline asm, but it's over
     //             my head personally
-    #[cfg(any(target_arch = "mips",
-              target_arch = "mipsel",
-              all(target_arch = "arm", not(target_os = "ios"))))]
-    #[inline(always)]
-    unsafe fn target_get_sp_limit() -> uint {
-        use libc::c_void;
-        return get_sp_limit() as uint;
-        extern {
-            fn get_sp_limit() -> *const c_void;
-        }
-    }
+    // Hack to disable the stack support for ARMv5
+    // #[cfg(any(target_arch = "mips",
+    //           target_arch = "mipsel",
+    //           all(target_arch = "arm", not(target_os = "ios"))))]
+    // #[inline(always)]
+    // unsafe fn target_get_sp_limit() -> uint {
+    //     use libc::c_void;
+    //     return get_sp_limit() as uint;
+    //     extern {
+    //         fn get_sp_limit() -> *const c_void;
+    //     }
+    // }
 
     // aarch64 - FIXME(AARCH64): missing...
     #[cfg(target_arch = "aarch64")]
@@ -329,7 +332,8 @@ pub unsafe fn get_sp_limit() -> uint {
     // iOS doesn't support segmented stacks yet. This function might
     // be called by runtime though so it is unsafe to mark it as
     // unreachable, let's return a fixed constant.
-    #[cfg(all(target_arch = "arm", target_os = "ios"))] #[inline(always)]
+    // Hack to disable the stack support for ARMv5
+    #[cfg(all(target_arch = "arm"))] #[inline(always)]
     unsafe fn target_get_sp_limit() -> uint {
         1024
     }
